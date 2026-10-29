@@ -86,6 +86,7 @@ int main(int argc, char *argv[]) {
       average_img_grc[pixel] += images[cur_img][pixel] / short_files;
     }
   }
+  // whoami?
   /*      ////IMAGE OUTPUT MAKER FOR VISUALISATION////
           // Divide each pixel total by the number of images.
           unsigned char png_pixels[28 * 28];
