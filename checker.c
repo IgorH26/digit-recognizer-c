@@ -3,6 +3,8 @@
 // Compile stb_image's implementation in this source file only.
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 #include <dirent.h>
 #include <math.h>
 #include <stdlib.h>
@@ -10,6 +12,7 @@
 const char *ans_img_s = "answer_img_small";
 const char *ans_img_l = "answer_img_large";
 const int short_files = 12;
+
 float sigmoid(float x);
 void matrix_print(int mat_x, int mat_y, const float mat[]);
 void matrix_multiplication(int mat_w_x, int mat_w_y, int mat_n_x, int mat_n_y,
@@ -32,6 +35,7 @@ int main(int argc, char *argv[]) {
 
   // TODO: loop for each image in folder / each file.
   int images[short_files][784];
+  int img_index = 0;
   DIR *dir = opendir(folder_path);
   if (dir == NULL) {
     perror(folder_path);
@@ -61,14 +65,40 @@ int main(int argc, char *argv[]) {
       for (int x = 0; x < width; x++) {
         // Rows are stored consecutively: skip y full rows, then move x pixels.
         int index = y * width + x;
-        printf("%3d ", pixels[index]);
+        images[img_index][index] = pixels[index];
       }
-      putchar('\n');
     }
+    img_index++;
     stbi_image_free(pixels);
   }
 
   closedir(dir);
+  float average_img_grc[784] = {0};
+
+  if (img_index == 0) {
+    fprintf(stderr, "No images loaded\n");
+    return 1;
+  }
+
+  // Add the same pixel from every image.
+  for (int cur_img = 0; cur_img < img_index; cur_img++) {
+    for (int pixel = 0; pixel < 784; pixel++) {
+      average_img_grc[pixel] += images[cur_img][pixel] / short_files;
+    }
+  }
+  /*      ////IMAGE OUTPUT MAKER FOR VISUALISATION////
+          // Divide each pixel total by the number of images.
+          unsigned char png_pixels[28 * 28];
+
+          for (int i = 0; i < 28 * 28; i++) {
+            png_pixels[i] = (unsigned char)(average_img_grc[i] + 0.5f);
+          }
+
+          if (!stbi_write_png("average.png", 28, 28, 1, png_pixels, 28)) {
+            fprintf(stderr, "Could not write average.png\n");
+            return 1;
+          }
+  */
 }
 
 // Squash a neuron's weighted input toward 0 or 1 using 1 / (1 + e^(-x)).
