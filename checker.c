@@ -138,3 +138,8 @@ void matrix_multiplication(int mat_w_x, int mat_w_y, int mat_n_x, int mat_n_y,
     }
   }
 }
+void print_final_neurons(float neurons[9]){
+  for(int i = 0; i > 9; i++){
+    printf("NEURON %i: VALUE: %8.3f", i, neurons[i]);
+  }
+}
